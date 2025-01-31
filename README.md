@@ -14,7 +14,6 @@ To submit your results, please clone this repository and make your edits. Once y
 
 ### Support/resource management/Shell
 1. A user has several versions of R installed in their path. Each version of R has a number of locally installed libraries. The user is confused, and would like to know which library is installed for each version of R. Can you write a command to help them out?
-
 <ul>
 <b>Ans:</b> The path to R libraries should be present in .libPaths() and `installed.packages()` can be used to get the information about the installed packages in the default library path which is .libPaths()[1] by default. So, by running `lapply(.libPaths(), installed.packages)` the user can get package information from the different library paths.
 </ul>
@@ -46,7 +45,11 @@ To submit your results, please clone this repository and make your edits. Once y
      - How many jobs does the user `pathpip` have running in all queues?
      - A user wants to know how many jobs they have pending (`PEND`) and running (`RUN`) in each queue. Write a command line to do that (You can use the log above to check your command line). How would they display this on their screen permanently, in real time?
 9. An analysis you need to run on the cluster requires a particular python library, but you do not have administrator rights. IT is on holiday. What do you do?
-10. All major computational tasks in your lab are done via SSH connection to mainframe servers or HPC clusters. A user comes from a Linux (mostly command-line) background but IT only support Windows 10 for laptops. How would you advise them to configure their laptop to make their transition easier?
+<ul>
+<b>Ans:</b> I will install it locally using `pip install --user my_package`. This will install it in ~/.local/lib/pythonX.Y/site-packages/my_package/, where X, and Y are major and minor Python versions. Then, I will also need to add the ~/.local/bin to PATH as export PATH=$HOME/.local/bin:$PATH in my .bashrc file. This is done to make sure my package binary is discoverable during runtime in case it is a command-line tool.
+</ul>
+
+11. All major computational tasks in your lab are done via SSH connection to mainframe servers or HPC clusters. A user comes from a Linux (mostly command-line) background but IT only support Windows 10 for laptops. How would you advise them to configure their laptop to make their transition easier?
 
 ### Bioinformatics
 1. The [VCF format](http://www.internationalgenome.org/wiki/Analysis/vcf4.0/) is a popular format to describe genetic variations in a study group. It is often used in sequencing projects. Due to size concerns, it is often compressed using `gzip` and indexed using `tabix`. A binary version, BCF, also exists.
