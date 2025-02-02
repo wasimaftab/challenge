@@ -55,6 +55,77 @@ To submit your results, please clone this repository and make your edits. Once y
 1. The [VCF format](http://www.internationalgenome.org/wiki/Analysis/vcf4.0/) is a popular format to describe genetic variations in a study group. It is often used in sequencing projects. Due to size concerns, it is often compressed using `gzip` and indexed using `tabix`. A binary version, BCF, also exists.
     - Write a command or script to remove duplicate positions in a VCF such as [this one](data/duplicates.vcf.gz), independently of their alleles. The positions can be duplicated an arbitrary number of times. Write code to keep the first, last and a random record among each set of duplicated records.
     - Same question, but make duplicate detection allele-specific. When it finds such an exact duplicate, your code should remove all of the corresponding records.
+```
+import pysam
+import random
+import pdb
+import pandas as pd
+import gzip
+
+## User defined functions
+def select_random_without_first_last(group):
+    """Selects a random row excluding the first and last records."""
+    if len(group) <= 2:
+        return None  # No middle records available
+    middle_records = group.iloc[1:-1]  # Exclude first and last
+    return middle_records.sample(1)
+
+# Read the VCF file and extract variant records while handling missing columns
+vcf_file_path = "duplicates.vcf.gz"
+variant_records = []
+header_lines = []
+
+with gzip.open(vcf_file_path, "rt") as vcf_file:
+    for line in vcf_file:
+        if line.startswith("#"):
+            header_lines.append(line)  # Store header for later writing
+        else:
+            fields = line.strip().split("\t")
+            variant_records.append(fields)
+
+# Determine the maximum number of columns present
+max_cols = max(len(record) for record in variant_records)
+
+# Define flexible column names based on VCF specification
+vcf_columns = header_lines[-1].strip("\n").replace("#", "").split("\t")
+
+# Convert to DataFrame
+df = pd.DataFrame(variant_records, columns=vcf_columns[:max_cols])
+
+# Convert numeric columns to appropriate types
+df["POS"] = df["POS"].astype(int)
+
+# Task 1. keep first, last, and a random entry
+df_sorted = df.sort_values(by=["CHROM", "POS"])
+df_grouped = df_sorted.groupby(["CHROM", "POS"])
+# pdb.set_trace()
+
+df_first = df_grouped.first().reset_index()
+df_last = df_grouped.last().reset_index()
+# df_random = df_grouped.apply(lambda x: x.sample(1)).reset_index(drop=True)
+df_random = df_grouped.apply(select_random_without_first_last).reset_index(drop=True)
+
+df_position_filtered = pd.concat([df_first, df_last, df_random]).drop_duplicates()
+
+# **2. Allele-specific Duplicate Removal: Remove exact duplicates**
+df_allele_grouped = df_sorted.groupby(["CHROM", "POS", "REF", "ALT"])
+df_allele_filtered = df_allele_grouped.filter(lambda x: len(x) == 1)  # Remove exact duplicates
+
+# Save both results as new VCF files
+position_filtered_path = "cleaned_positions.vcf.gz"
+allele_filtered_path = "cleaned_allele_specific.vcf.gz"
+
+# Writing the results back to VCF format
+def write_vcf(output_path, df_filtered):
+    with gzip.open(output_path, "wt") as vcf_out:
+        vcf_out.writelines(header_lines)  # Write header first
+        for _, row in df_filtered.iterrows():
+            vcf_out.write("\t".join(map(str, row.tolist())) + "\n")
+
+# Save cleaned VCFs
+write_vcf(position_filtered_path, df_position_filtered)
+write_vcf(allele_filtered_path, df_allele_filtered)
+```
 2. From an existing VCF with an arbitrary number of samples, how do you produce a VCF file without any samples using `bcftools`?
 3. You are the curator of a genotype dataset with a very strict privacy policy in place. In particular, it should be impossible to tell, given access to a person's genetic data, whether they were part of your study by looking at a dataset you provided. A collaborator is asking you for some data to run tests on their code. What information can you safely contribute from your study?
 4. How do you convert a gzipped VCF to the `bimbam` format? (you may choose to script a solution yourself, or not)
