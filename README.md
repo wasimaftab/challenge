@@ -107,7 +107,7 @@ df_random = df_grouped.apply(select_random_without_first_last).reset_index(drop=
 
 df_position_filtered = pd.concat([df_first, df_last, df_random]).drop_duplicates()
 
-# **2. Allele-specific Duplicate Removal: Remove exact duplicates**
+# 2. Allele-specific duplicate removal (Remove exact duplicates)
 df_allele_grouped = df_sorted.groupby(["CHROM", "POS", "REF", "ALT"])
 df_allele_filtered = df_allele_grouped.filter(lambda x: len(x) == 1)  # Remove exact duplicates
 
