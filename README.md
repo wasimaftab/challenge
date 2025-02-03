@@ -14,9 +14,9 @@ To submit your results, please clone this repository and make your edits. Once y
 
 ### Support/resource management/Shell
 1. A user has several versions of R installed in their path. Each version of R has a number of locally installed libraries. The user is confused, and would like to know which library is installed for each version of R. Can you write a command to help them out?
-<ul>
-<b>Ans:</b> The path to R libraries should be present in .libPaths() and `installed.packages()` can be used to get the information about the installed packages in the default library path which is .libPaths()[1] by default. So, by running `lapply(.libPaths(), installed.packages)` the user can get package information from the different library paths.
-</ul>
+    <ul>
+    <b>Ans:</b> The path to R libraries should be present in .libPaths() and `installed.packages()` can be used to get the information about the installed packages in the default library path which is .libPaths()[1] by default. So, by running `lapply(.libPaths(), installed.packages)` the user can get package information from the different library paths.
+    </ul>
 
 3. A common problem with shared filesystems is a disk quota overflow. This can be due to 1) a large combined size on disk or 2) too many files present on disk. We would like to help users who encounter this problem to locate the problematic files/directories. Write a command to sort all subdirectories of level `n` (`n` determined by the user) by their human-readable size. Write another command to sort all subdirectories of level `n` according to the number of files they contain.
 4. A user wants to install an `R` package and gets the following [error log](data/error.log). What is likely to cause the error and how can they solve it?
@@ -45,9 +45,9 @@ To submit your results, please clone this repository and make your edits. Once y
      - How many jobs does the user `pathpip` have running in all queues?
      - A user wants to know how many jobs they have pending (`PEND`) and running (`RUN`) in each queue. Write a command line to do that (You can use the log above to check your command line). How would they display this on their screen permanently, in real time?
 9. An analysis you need to run on the cluster requires a particular python library, but you do not have administrator rights. IT is on holiday. What do you do?
-<ul>
-<b>Ans:</b> I will install it locally using `pip install --user my_package`. This will install it in ~/.local/lib/pythonX.Y/site-packages/my_package/, where X, and Y are major and minor Python versions. Then, I will also need to add the ~/.local/bin to PATH as export PATH=$HOME/.local/bin:$PATH in my .bashrc file. This is done to make sure my package binary is discoverable during runtime in case it is a command-line tool.
-</ul>
+    <ul>
+    <b>Ans:</b> I will install it locally using `pip install --user my_package`. This will install it in ~/.local/lib/pythonX.Y/site-packages/my_package/, where X, and Y are major and minor Python versions. Then, I will also need to add the ~/.local/bin to PATH as export PATH=$HOME/.local/bin:$PATH in my .bashrc file. This is done to make sure my package binary is discoverable during runtime in case it is a command-line tool.
+    </ul>
 
 11. All major computational tasks in your lab are done via SSH connection to mainframe servers or HPC clusters. A user comes from a Linux (mostly command-line) background but IT only support Windows 10 for laptops. How would you advise them to configure their laptop to make their transition easier?
 
@@ -55,107 +55,198 @@ To submit your results, please clone this repository and make your edits. Once y
 1. The [VCF format](http://www.internationalgenome.org/wiki/Analysis/vcf4.0/) is a popular format to describe genetic variations in a study group. It is often used in sequencing projects. Due to size concerns, it is often compressed using `gzip` and indexed using `tabix`. A binary version, BCF, also exists.
     - Write a command or script to remove duplicate positions in a VCF such as [this one](data/duplicates.vcf.gz), independently of their alleles. The positions can be duplicated an arbitrary number of times. Write code to keep the first, last and a random record among each set of duplicated records.
     - Same question, but make duplicate detection allele-specific. When it finds such an exact duplicate, your code should remove all of the corresponding records.
-```
-import pysam
-import random
-import pdb
-import pandas as pd
-import gzip
-
-## User defined functions
-def select_random_without_first_last(group):
-    """Selects a random row excluding the first and last records."""
-    if len(group) <= 2:
-        return None  # No middle records available
-    middle_records = group.iloc[1:-1]  # Exclude first and last
-    return middle_records.sample(1)
-
-# Read the VCF file and extract variant records while handling missing columns
-vcf_file_path = "duplicates.vcf.gz"
-variant_records = []
-header_lines = []
-
-with gzip.open(vcf_file_path, "rt") as vcf_file:
-    for line in vcf_file:
-        if line.startswith("#"):
-            header_lines.append(line)  # Store header for later writing
-        else:
-            fields = line.strip().split("\t")
-            variant_records.append(fields)
-
-# Determine the maximum number of columns present
-max_cols = max(len(record) for record in variant_records)
-
-# Define flexible column names based on VCF specification
-vcf_columns = header_lines[-1].strip("\n").replace("#", "").split("\t")
-
-# Convert to DataFrame
-df = pd.DataFrame(variant_records, columns=vcf_columns[:max_cols])
-
-# Convert numeric columns to appropriate types
-df["POS"] = df["POS"].astype(int)
-
-# Task 1. keep first, last, and a random entry
-df_sorted = df.sort_values(by=["CHROM", "POS"])
-df_grouped = df_sorted.groupby(["CHROM", "POS"])
-# pdb.set_trace()
-
-df_first = df_grouped.first().reset_index()
-df_last = df_grouped.last().reset_index()
-# df_random = df_grouped.apply(lambda x: x.sample(1)).reset_index(drop=True)
-df_random = df_grouped.apply(select_random_without_first_last).reset_index(drop=True)
-
-df_position_filtered = pd.concat([df_first, df_last, df_random]).drop_duplicates()
-
-# 2. Allele-specific duplicate removal (Remove exact duplicates)
-df_allele_grouped = df_sorted.groupby(["CHROM", "POS", "REF", "ALT"])
-df_allele_filtered = df_allele_grouped.filter(lambda x: len(x) == 1)  # Remove exact duplicates
-
-# Save both results as new VCF files
-position_filtered_path = "cleaned_positions.vcf.gz"
-allele_filtered_path = "cleaned_allele_specific.vcf.gz"
-
-# Writing the results back to VCF format
-def write_vcf(output_path, df_filtered):
-    with gzip.open(output_path, "wt") as vcf_out:
-        vcf_out.writelines(header_lines)  # Write header first
-        for _, row in df_filtered.iterrows():
-            vcf_out.write("\t".join(map(str, row.tolist())) + "\n")
-
-# Save cleaned VCFs
-write_vcf(position_filtered_path, df_position_filtered)
-write_vcf(allele_filtered_path, df_allele_filtered)
-```
+    ```
+    import pysam
+    import random
+    import pdb
+    import pandas as pd
+    import gzip
+    
+    ## User defined functions
+    def select_random_without_first_last(group):
+        """Selects a random row excluding the first and last records."""
+        if len(group) <= 2:
+            return None  # No middle records available
+        middle_records = group.iloc[1:-1]  # Exclude first and last
+        return middle_records.sample(1)
+    
+    # Read the VCF file and extract variant records while handling missing columns
+    vcf_file_path = "duplicates.vcf.gz"
+    variant_records = []
+    header_lines = []
+    
+    with gzip.open(vcf_file_path, "rt") as vcf_file:
+        for line in vcf_file:
+            if line.startswith("#"):
+                header_lines.append(line)  # Store header for later writing
+            else:
+                fields = line.strip().split("\t")
+                variant_records.append(fields)
+    
+    # Determine the maximum number of columns present
+    max_cols = max(len(record) for record in variant_records)
+    
+    # Define flexible column names based on VCF specification
+    vcf_columns = header_lines[-1].strip("\n").replace("#", "").split("\t")
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(variant_records, columns=vcf_columns[:max_cols])
+    
+    # Convert numeric columns to appropriate types
+    df["POS"] = df["POS"].astype(int)
+    
+    # Task 1. keep first, last, and a random entry
+    df_sorted = df.sort_values(by=["CHROM", "POS"])
+    df_grouped = df_sorted.groupby(["CHROM", "POS"])
+    # pdb.set_trace()
+    
+    df_first = df_grouped.first().reset_index()
+    df_last = df_grouped.last().reset_index()
+    # df_random = df_grouped.apply(lambda x: x.sample(1)).reset_index(drop=True)
+    df_random = df_grouped.apply(select_random_without_first_last).reset_index(drop=True)
+    
+    df_position_filtered = pd.concat([df_first, df_last, df_random]).drop_duplicates()
+    
+    # 2. Allele-specific duplicate removal (Remove exact duplicates)
+    df_allele_grouped = df_sorted.groupby(["CHROM", "POS", "REF", "ALT"])
+    df_allele_filtered = df_allele_grouped.filter(lambda x: len(x) == 1)  # Remove exact duplicates
+    
+    # Save both results as new VCF files
+    position_filtered_path = "cleaned_positions.vcf.gz"
+    allele_filtered_path = "cleaned_allele_specific.vcf.gz"
+    
+    # Writing the results back to VCF format
+    def write_vcf(output_path, df_filtered):
+        with gzip.open(output_path, "wt") as vcf_out:
+            vcf_out.writelines(header_lines)  # Write header first
+            for _, row in df_filtered.iterrows():
+                vcf_out.write("\t".join(map(str, row.tolist())) + "\n")
+    
+    # Save cleaned VCFs
+    write_vcf(position_filtered_path, df_position_filtered)
+    write_vcf(allele_filtered_path, df_allele_filtered)
+    ```
 2. From an existing VCF with an arbitrary number of samples, how do you produce a VCF file without any samples using `bcftools`?
-3. You are the curator of a genotype dataset with a very strict privacy policy in place. In particular, it should be impossible to tell, given access to a person's genetic data, whether they were part of your study by looking at a dataset you provided. A collaborator is asking you for some data to run tests on their code. What information can you safely contribute from your study?
-4. How do you convert a gzipped VCF to the `bimbam` format? (you may choose to script a solution yourself, or not)
-5. A user sends you a small number of chromosome and positions in build 38 that they want to know the rsID of. 
+    ```
+    bcftools view -G samples.vcf.gz -Oz -o no_samples_my.vcf.gz
+    ```
+4. You are the curator of a genotype dataset with a very strict privacy policy in place. In particular, it should be impossible to tell, given access to a person's genetic data, whether they were part of your study by looking at a dataset you provided. A collaborator is asking you for some data to run tests on their code. What information can you safely contribute from your study?
+5. How do you convert a gzipped VCF to the `bimbam` format? (you may choose to script a solution yourself, or not)
+6. A user sends you a small number of chromosome and positions in build 38 that they want to know the rsID of. 
     - What is missing from their request? What kind of unexpected output can they expect?
     - Given [this file](data/rand.chrpos.txt), honour their request using the Ensembl REST API.
     - Do the same, but offline, using the dbSNP r.150 VCF file.
     - What would change if these positions were in build 37?
     - If the user sends you 7,000 such chromosome positions, how would the above methods perform? Do you know of any alternatives?
-6. How would you change the chromosome numbers in the file above to chromosome names (e.g. "chr1" instead of "1")?
+7. How would you change the chromosome numbers in the file above to chromosome names (e.g. "chr1" instead of "1")?
     - How would you change the names back to the original? Would your solution work if an additional column containing text of arbitrary length and content is appended at the left of the file?
     - These positions are extracted from a VCF. Convert this file to the BED format.
-7.	Download the 1000 Genomes sites VCF file for chromosome 21 [here](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/GRCh38_positions/ALL.chr21_GRCh38_sites.20170504.vcf.gz). We want to compare it to [a locally stored file](data/ALL.chr21_GRCh38_sites.20170504.vcf.gz).
+8.	Download the 1000 Genomes sites VCF file for chromosome 21 [here](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/GRCh38_positions/ALL.chr21_GRCh38_sites.20170504.vcf.gz). We want to compare it to [a locally stored file](data/ALL.chr21_GRCh38_sites.20170504.vcf.gz).
     - What is the fastest way to check the integrity of, or compare, any such downloaded file?
     - If you find that the files are indeed different, how do you find their differences? Keep in mind that this kind of file can be very large (>100Gb), your solution should be as fast and memory-efficient as possible.
     - If you found no differences in the end, what could cause a false alarm?
-8.	What is the p-value corresponding to standard normal z-scores of 10.35, 29.7, 45.688 and 78.1479?
-9.	We want to round a column of numbers to `n` decimal places, with values with 5 as their rightmost significant digit rounded up. Use the language of your choice.
-10.  Is [this HRC-imputed file](https://drive.google.com/open?id=1dOYlwIlAyz9-i4gVy2sgpQv_4YX9Y5nU) missing any chromosomes? Try to find out in seconds if you can.
-11.  Find out the coordinates of the _ADIPOQ_ gene. Your method should be generalisable to a list of genes and take a few seconds to run (take inspiration from question 5). Then, please report the following:
+9.	What is the p-value corresponding to standard normal z-scores of 10.35, 29.7, 45.688 and 78.1479?
+    <ul>
+    <b>Ans:</b> Since all given Z-scores are positive, we only need to compute the right-tailed p-values (i.e., 𝑃(𝑍 > 𝑞)).
+    In R this can be done by using the following commands,
+    <br>q <- c(10.35, 29.7, 45.688, 78.1479) <br>
+    p_values <- pnorm(q, lower.tail = FALSE) # One-tailed (right-sided) p-values
+    </ul>    
+
+11.	We want to round a column of numbers to `n` decimal places, with values with 5 as their rightmost significant digit rounded up. Use the language of your choice.
+    ```
+    import pandas as pd
+    from decimal import Decimal, ROUND_HALF_UP
+    import pdb
+    
+    def round_half_up(x, n=0):
+        """
+        Rounds a float x to n decimals. If the rightmost digit in the
+        (original) decimal part is '5', then the nth digit is bumped up 
+        (with proper carry propagation) regardless of any conventional
+        rounding rules.
+    
+        Parameters:
+          x: the number (typically a float) to round.
+          n: the number of decimal places desired.
+        
+        Returns:
+          The rounded value as a float.
+        """
+        # Work only if x is a float (otherwise, leave it unchanged)
+        if isinstance(x, float):
+            s = str(x)  # use the float’s string representation
+            if '.' not in s:
+                return x  # no fractional part
+            
+            integer_part, frac_part = s.split('.')
+            
+            # If the caller asked for more decimals than exist, use what we have.
+            if n > len(frac_part):
+                n = len(frac_part)
+            
+            # If there are no decimals requested, work on the integer part.
+            if n == 0:
+                # Check if the entire number ends with a 5.
+                if s[-1] == '5':
+                    return float(int(integer_part) + 1)
+                else:
+                    return float(round(x))
+            
+            # If the original fractional part (as given) ends with '5'
+            # then we force an upward adjustment in the target n-digit portion.
+            if frac_part[-1] == '5':
+                # pdb.set_trace()
+                # Work with the first n digits (even if frac_part has extra digits,
+                # we only consider the desired precision)
+                target = list(frac_part[:n])
+                # Increment the last digit of the target.
+                # (This is the “round up” step.)
+                # We must handle the possibility of a carry if the digit is 9.
+                i = n - 1
+                carry = 1
+                while i >= 0 and carry:
+                    new_val = int(target[i]) + carry
+                    if new_val == 10:
+                        target[i] = '0'
+                        carry = 1
+                    else:
+                        target[i] = str(new_val)
+                        carry = 0
+                    i -= 1
+                # If a carry remains, increment the integer part.
+                if carry:
+                    integer_part = str(int(integer_part) + 1)
+                new_frac = "".join(target)
+                return float(integer_part + '.' + new_frac)
+            else:
+                # Otherwise, use a conventional round()
+                return round(x, n)
+        else:
+            return x
+    
+    # Example usage
+    if __name__ == '__main__':
+        # n = 14
+        n = 2
+        pd.set_option("display.precision", 14)
+        df = pd.DataFrame({
+            'values': [2.41238537658565, 1.225658565, 1.230, 1.2005, 1.225]
+        })
+        df['rounded'] = df['values'].apply(lambda x: round_half_up(x, n))
+    ```
+13.  Is [this HRC-imputed file](https://drive.google.com/open?id=1dOYlwIlAyz9-i4gVy2sgpQv_4YX9Y5nU) missing any chromosomes? Try to find out in seconds if you can.
+14.  Find out the coordinates of the _ADIPOQ_ gene. Your method should be generalisable to a list of genes and take a few seconds to run (take inspiration from question 5). Then, please report the following:
     - the coordinates of the exons of its canonical transcript.
     - all documented variants in this gene.
     - all phenotype-associated variants. 
     - all documented loss-of-function (LoF) variants in this gene. How did you define LoF?
     - If asked to find all regulatory variants that potentially affect this gene, which questions would you ask and how would you proceed?
-12. How would you convert a VCF file to the Plink binary format? How would you do the reverse, and what kind of problems do you anticipate?
-13. Write a snippet to reformat a PED file so as to output a file with the following header `sample_name genotype_SNP1 genotype_SNP2 ...` where genotypes are coded VCF-style (e.g `A/C`, the order of the alleles in the output is not important).
-14. A genetic association pipeline starts with a VCF and produces summary statistics for every position. The VCF contains multiallelics and indels. Unfortunately, a program in the pipeline trims all alleles to their first character. Why might allele frequencies not always be equal for a given variant? Find a way to correct the alleles in the association file by using the information from the VCF. Select columns are provided for [the association file](https://github.com/hmgu-itg/challenge/raw/master/data/association.txt.gz). We also provide [a file](https://github.com/hmgu-itg/challenge/raw/master/data/fromVCF.txt.gz) that was created from the VCF using `bcftools query -f '%CHROM %POS %REF %ALT %AN %AC\n'`.
-15. [This file](https://github.com/hmgu-itg/challenge/raw/master/data/mock.eQTL.forChallenge.txt) contains eQTL overlap data for SNPs that arise as signals in GWAS for several phenotypes. Reformat this file to have one line per SNP/phenotype pair, and two additional columns formatted as such : `GENE1(tissue1, tissue2),GENE2(tissue1, tissue3)`, and `GENE1(2),GENE2(2)`. Each line should contain the SNP/phenotype pair, all genes found overlapping and their respective tissues, and all genes found overlapping with the number of tissues.
-16. A researcher wants to conduct a disease association study. However, colleagues warn him that the dataset contains related individuals. He would like to remove relatedness in his dataset, but given his disease is rare, he would also like to maximise the number of cases kept in. Using [a list of samples with disease status](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.pheno.tsv) and [a file containing pairs of individuals above a relatedness threshold](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.tsv), create an exclusion list of samples to remove to help the researcher achieve their goal.
+15. How would you convert a VCF file to the Plink binary format? How would you do the reverse, and what kind of problems do you anticipate?
+16. Write a snippet to reformat a PED file so as to output a file with the following header `sample_name genotype_SNP1 genotype_SNP2 ...` where genotypes are coded VCF-style (e.g `A/C`, the order of the alleles in the output is not important).
+17. A genetic association pipeline starts with a VCF and produces summary statistics for every position. The VCF contains multiallelics and indels. Unfortunately, a program in the pipeline trims all alleles to their first character. Why might allele frequencies not always be equal for a given variant? Find a way to correct the alleles in the association file by using the information from the VCF. Select columns are provided for [the association file](https://github.com/hmgu-itg/challenge/raw/master/data/association.txt.gz). We also provide [a file](https://github.com/hmgu-itg/challenge/raw/master/data/fromVCF.txt.gz) that was created from the VCF using `bcftools query -f '%CHROM %POS %REF %ALT %AN %AC\n'`.
+18. [This file](https://github.com/hmgu-itg/challenge/raw/master/data/mock.eQTL.forChallenge.txt) contains eQTL overlap data for SNPs that arise as signals in GWAS for several phenotypes. Reformat this file to have one line per SNP/phenotype pair, and two additional columns formatted as such : `GENE1(tissue1, tissue2),GENE2(tissue1, tissue3)`, and `GENE1(2),GENE2(2)`. Each line should contain the SNP/phenotype pair, all genes found overlapping and their respective tissues, and all genes found overlapping with the number of tissues.
+19. A researcher wants to conduct a disease association study. However, colleagues warn him that the dataset contains related individuals. He would like to remove relatedness in his dataset, but given his disease is rare, he would also like to maximise the number of cases kept in. Using [a list of samples with disease status](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.pheno.tsv) and [a file containing pairs of individuals above a relatedness threshold](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.tsv), create an exclusion list of samples to remove to help the researcher achieve their goal.
 
 ### Statistical genetics
 1. You sample at random 10,000 variants from a deep (50x) whole-genome sequencing variant call file describing 1,000 individuals. What do you expect the distribution of minor allele frequency to look like? In particular, which minor allele counts are likely to be most frequent?
