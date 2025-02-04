@@ -271,7 +271,7 @@ To submit your results, please clone this repository and make your edits. Once y
 5. A common practice when performing genetic association studies is to perform an ethnicity check as a quality control step. Can you explain how this is done?
     - You are dealing with whole-genome sequencing data in 2,326 Bulgarian samples. How would you perform such an ethnicity check, and which projection dataset would you use?
         	<ul>
-	<b>Ans:</b>I will perform the following steps:
+	<b>Ans:</b> I will perform the following steps:
         <p>
     	<li> First, I will apply standard QC filters as described briefly in the second question's answer. This will allow me to extract a set of high-quality, common, and ideally independent SNPs from Bulgarian samples.</li> 
     
@@ -286,7 +286,7 @@ To submit your results, please clone this repository and make your edits. Once y
          </p>
 6. You perform a single-point association with blood lipids and find a variant with MAF=0.7% associated at p=1e-14. Do you expect the effect size to be large or small? What would be your next steps investigating this signal?
 	<ul>
-	<b>Ans:</b>When a variant with a minor allele frequency (MAF) of only 0.7% shows an extremely significant association (p=1e-14), this typically implies large effect size. That's because achieving p=1e-14 with so few minor alleles in the dataset usually requires a large per-allele effect, assuming the sample size is in the typical range for a genetic study (thousands to tens of thousands of individuals).Thsi also means, you likely have a relatively large cohort. Otherwise, you wouldn’t get such robust significance for a variant present in <1% of chromosomes.
+	<b>Ans:</b> When a variant with a minor allele frequency (MAF) of only 0.7% shows an extremely significant association (p=1e-14), this typically implies large effect size. That's because achieving p=1e-14 with so few minor alleles in the dataset usually requires a large per-allele effect, assuming the sample size is in the typical range for a genetic study (thousands to tens of thousands of individuals).Thsi also means, you likely have a relatively large cohort. Otherwise, you wouldn’t get such robust significance for a variant present in <1% of chromosomes.
 	
 	As a further investigation, I will try to do the following:
 
@@ -304,4 +304,12 @@ To submit your results, please clone this repository and make your edits. Once y
     - Which checks would you perform on such a dataset?
     - You wish to include this dataset in a meta-analysis. Which additional information should you ask for in your next email to your colleague?
     - In this dataset, you observe  &#955;=1.25. The analyst has adjusted for age, age-squared, sex, and fasting status. What would you suggest they do?
-11. You are a co-author on a manuscript. You receive a draft, in which the main author has used the traditional &#945;=5e-8 as the significance threshold. The paper describes an analysis of 10 related blood phenotypes (platelet count, platelet volume, immature platelet fraction ...) using the fixed markers of the Infinium ImmunoArray on 897 individuals. What do you think about the chosen threshold, and what would you suggest to the first author? What would be your comments on the design of the study? 
+11. You are a co-author on a manuscript. You receive a draft, in which the main author has used the traditional &#945;=5e-8 as the significance threshold. The paper describes an analysis of 10 related blood phenotypes (platelet count, platelet volume, immature platelet fraction ...) using the fixed markers of the Infinium ImmunoArray on 897 individuals. What do you think about the chosen threshold, and what would you suggest to the first author? What would be your comments on the design of the study?
+	<ul>
+	<b>Ans:</b> I will let the first author know the following concerns:
+
+	<li>For 10 phenotypes a stricter corerction (Bonferroni) would change the threshold to 5e-9. However, If the 10 phenotypes are correlated (e.g., platelet count and platelet volume might be strongly related), then we might not need a full 10-fold Bonferroni correction. Methods such as Sidak or matSpD that account for correlated phenotypes can yield an "effective number of independent tests" less than 10.</li>
+	
+	<li>Another point is that the Infinium ImmunoArray typically has a specific focus on immunologically relevant variants, and fewer total SNPs than a standard GWAS array which might have 500k–1M+ variants. Therefore, if we are analyzing fewer variants, for example, ~200k or 300k, then the multiple testing burden should be lesser than a million. Therefore, I might argue about using a slightly less stringent threshold than 5e-8, especially if we only test the variants actually on that array.</li>
+	
+	<li>The other concern that I have is about the small sample size. With fewer than 1,000 individuals, the statistical power to detect common variant associations, especially at a threshold of 5e-8 will be very limited. I think, for rare variants or small effects, it is extremely challenging to reach 5e-8 significance in only 897 subjects. Therefore, it may be possible that reviewers of the manuscript ask for replication or meta-analysis with larger samples.</li>
