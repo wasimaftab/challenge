@@ -267,8 +267,23 @@ To submit your results, please clone this repository and make your edits. Once y
              <li>Population structure / Relatedness: I will use PCA or relationship checks to catch outliers or duplicates.</li>
         </ul>
     </p>
+    
 5. A common practice when performing genetic association studies is to perform an ethnicity check as a quality control step. Can you explain how this is done?
-    - You are dealing with whole-genome sequencing data in 2,326 Bulgarian samples. How would you perform such an ethnicity check, and which projection dataset would you use? 
+    - You are dealing with whole-genome sequencing data in 2,326 Bulgarian samples. How would you perform such an ethnicity check, and which projection dataset would you use?
+        	<ul>
+	<b>Ans:</b>I will perform the following steps:
+        <p>
+    	<li> First, I will apply standard QC filters as described briefly in the second question's answer. This will allow me to extract a set of high-quality, common, and ideally independent SNPs from Bulgarian samples.</li> 
+    
+    	<li> Then I will look for Linkage Disequilibrium (LD) using plink in the data and try to prune. For this purpose, I'll use SNPs that are not in high LD with one another as this will help me get a clear picture of overall population structure.</li>
+    
+    	<li> Then I will try to merge my data with a reference dataset. For this pupose, first a reference dataset must be selected. The 1000 Genomes Project could be a good choice because it contains samples from multiple ethnic groups, including several European populations, e.g., CEU, GBR, FIN, IBS, TSI. For Bulgarian samples, I expect them to cluster with European reference populations. Then I'll combine the earlier pruned Bulgarian dataset with the reference panel. I need to make sure that to use the same set of SNPs and also the allele coding should be consistent across datasets.
+    	</li>
+    
+    	<li>Then I will perform PCA on the merged dataset using plink. The analysis will generate principal components (PCs) that capture the major genetic variation.The PCA will yield coordinates for each individual and upon plotting these, there should be clusters corresponding to the known ethnic groups in the reference. I would expect the majority of the Bulgarian samples to cluster closely with European reference populations. I could also look for outliers or individuals (from Bulgarian dataset) fall far outside the European cluster, for example clustering with Africa or East Asian etc.These samples may need to be marked for further investigation or perhaps excluded from the study.
+    	</li>
+    	</ul>
+         </p>
 6. You perform a single-point association with blood lipids and find a variant with MAF=0.7% associated at p=1e-14. Do you expect the effect size to be large or small? What would be your next steps investigating this signal?
 7. You are running an inverse-variance based single-point meta-analysis of the above dataset together with a UK study of 12,400 individuals. The variant above is found in the UK dataset, but its association is weak (1e-3). However, another variant located 1kb downstream is strongly associated with the same trait (p=1e-15) but weakly associated in your study (p=5e-4). Which of these 2 variants do you expect will have the strongest meta-analysis p-value? What do you think is happening in this region, how can you test it, and which model could you apply if it is the case?
 8. An analyst studies a population of remote villages in Eastern Europe. They are interested in a particular variant, and compare the frequency in their villages (3.5%) to the EUR population frequency in the 1000 Genomes (0.03%). They conclude that the variant has increased in frequency in their villages. Do you agree, and if not, what would your advice be?
