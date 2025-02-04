@@ -285,10 +285,23 @@ To submit your results, please clone this repository and make your edits. Once y
     	</ul>
          </p>
 6. You perform a single-point association with blood lipids and find a variant with MAF=0.7% associated at p=1e-14. Do you expect the effect size to be large or small? What would be your next steps investigating this signal?
-7. You are running an inverse-variance based single-point meta-analysis of the above dataset together with a UK study of 12,400 individuals. The variant above is found in the UK dataset, but its association is weak (1e-3). However, another variant located 1kb downstream is strongly associated with the same trait (p=1e-15) but weakly associated in your study (p=5e-4). Which of these 2 variants do you expect will have the strongest meta-analysis p-value? What do you think is happening in this region, how can you test it, and which model could you apply if it is the case?
-8. An analyst studies a population of remote villages in Eastern Europe. They are interested in a particular variant, and compare the frequency in their villages (3.5%) to the EUR population frequency in the 1000 Genomes (0.03%). They conclude that the variant has increased in frequency in their villages. Do you agree, and if not, what would your advice be?
-9.  The same analyst sends you association summary statistics for random glucose.
+	<ul>
+	<b>Ans:</b>When a variant with a minor allele frequency (MAF) of only 0.7% shows an extremely significant association (p=1e-14), this typically implies large effect size. That's because achieving p=1e-14 with so few minor alleles in the dataset usually requires a large per-allele effect, assuming the sample size is in the typical range for a genetic study (thousands to tens of thousands of individuals).Thsi also means, you likely have a relatively large cohort. Otherwise, you wouldn’t get such robust significance for a variant present in <1% of chromosomes.
+	
+	As a further investigation, I will try to do the following:
+
+	<li>The most important next step would be to replicate the association in an independent sample set. If the signal reproduces, it strengthens confidence that this is a true finding rather than a statistical or technical artifact.</li>
+	
+	<li>I will also check the functional association of the findings, i.e., whether the variant lies in or near a known lipid-related gene or regulatory region. For this purspoe, I'll look up public databases such as Ensembl for annotation and predicted functional impact.</li>
+	
+	<li>I will suggest the experimentalists to perform orthogonal experiments (if feasible) to confirm a causal relationships.</li>
+	
+	<li>I’d look at the actual lipid measurements in carriers (LDL, HDL, etc.) to see if the difference is just statistically detectable or also clinically significant, for example, dangerously high LDL.</li>	
+	</ul>
+8. You are running an inverse-variance based single-point meta-analysis of the above dataset together with a UK study of 12,400 individuals. The variant above is found in the UK dataset, but its association is weak (1e-3). However, another variant located 1kb downstream is strongly associated with the same trait (p=1e-15) but weakly associated in your study (p=5e-4). Which of these 2 variants do you expect will have the strongest meta-analysis p-value? What do you think is happening in this region, how can you test it, and which model could you apply if it is the case?
+9. An analyst studies a population of remote villages in Eastern Europe. They are interested in a particular variant, and compare the frequency in their villages (3.5%) to the EUR population frequency in the 1000 Genomes (0.03%). They conclude that the variant has increased in frequency in their villages. Do you agree, and if not, what would your advice be?
+10.  The same analyst sends you association summary statistics for random glucose.
     - Which checks would you perform on such a dataset?
     - You wish to include this dataset in a meta-analysis. Which additional information should you ask for in your next email to your colleague?
     - In this dataset, you observe  &#955;=1.25. The analyst has adjusted for age, age-squared, sex, and fasting status. What would you suggest they do?
-10. You are a co-author on a manuscript. You receive a draft, in which the main author has used the traditional &#945;=5e-8 as the significance threshold. The paper describes an analysis of 10 related blood phenotypes (platelet count, platelet volume, immature platelet fraction ...) using the fixed markers of the Infinium ImmunoArray on 897 individuals. What do you think about the chosen threshold, and what would you suggest to the first author? What would be your comments on the design of the study? 
+11. You are a co-author on a manuscript. You receive a draft, in which the main author has used the traditional &#945;=5e-8 as the significance threshold. The paper describes an analysis of 10 related blood phenotypes (platelet count, platelet volume, immature platelet fraction ...) using the fixed markers of the Infinium ImmunoArray on 897 individuals. What do you think about the chosen threshold, and what would you suggest to the first author? What would be your comments on the design of the study? 
