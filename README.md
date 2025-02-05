@@ -20,15 +20,13 @@ To submit your results, please clone this repository and make your edits. Once y
 
 3. A common problem with shared filesystems is a disk quota overflow. This can be due to 1) a large combined size on disk or 2) too many files present on disk. We would like to help users who encounter this problem to locate the problematic files/directories. Write a command to sort all subdirectories of level `n` (`n` determined by the user) by their human-readable size. Write another command to sort all subdirectories of level `n` according to the number of files they contain.
 4. A user wants to install an `R` package and gets the following [error log](data/error.log). What is likely to cause the error and how can they solve it?
-   <p><b>Ans:</b> The error log contains the following error several times:</p>
-   
-    ```
-    cc1plus: error: unrecognised command line option ‘-std=c++11’
-    ```
-    This points to an incompatible g++ compiler, perhaps an older one which does not recognize the  `-std=c++11` flag. Also, towards the end the error like `/bin/sh: nc-config: command not found` suggests that some of the development package is missing or not in the PATH. So, the user needs to check these points, and fixing them might solve the issue.
+    <ul>
+    <b>Ans:</b> The error log contains the following error several times:<code>cc1plus: error: unrecognised command line option ‘-std=c++11’</code>. This points to an incompatible g++ compiler, perhaps an older one which does not recognize the  `-std=c++11` flag. Also, towards the end the error like `/bin/sh: nc-config: command not found` suggests that some of the development package is missing or not in the PATH. So, the user needs to check these points, and fixing them might solve the issue.
+    </ul>
 6. A user is running commands like this one `cat file1 <(cut -d " " -f 1-15,17,18 file2) > file3`. What does this command do? It runs fine on the command line, but then the user includes it into a file with other commands, saves it and runs `chmod +x` on it. However, that line of code throws the following error : `syntax error near unexpected token '('`. What has the user forgotten?
-   <p><b>Ans:</b> The command extracts the columns 1st to 15th, then 17th, 18th from file2 and then vertically concatenates at the end of file1 and finally saves into file3.
-   I think the user forgot to include the proper shebang line at the top of the script. By adding a line like <i>#!/bin/bash</i> should solve the issue.</p>
+    <ul>
+    <b>Ans:</b> The command extracts the columns 1st to 15th, then 17th, 18th from file2 and then vertically concatenates at the end of file1 and finally saves into file3. I think the user forgot to include the proper shebang line at the top of the script. By adding a line like <i>#!/bin/bash</i> should solve the issue.
+    </ul>
 8. A collaborator has sent you [this script](data/EasyQCWrapper.sh). It is a wrapper for a bioinformatics software called `EasyQC`.  Running it, you get the following error: 
 
     ```bash
@@ -58,12 +56,14 @@ To submit your results, please clone this repository and make your edits. Once y
     </ul>
 
 12. All major computational tasks in your lab are done via SSH connection to mainframe servers or HPC clusters. A user comes from a Linux (mostly command-line) background but IT only support Windows 10 for laptops. How would you advise them to configure their laptop to make their transition easier?
-	<p><b>Ans:</b> In my opinion, with the following configurations, a user coming from a Linux background will find Windows 10 much more comfortable for interacting with HPC:</p>
- 	<ul>
-		<li>WSL Linux: By installing WSL, e.g., Ubuntu on Windows, the user can get a near‐native Linux environment and command line.</li>
-		<li>Git Bash: This also offers Linux like shell on Windows. However, installing utility tools like <i>rsync</i> is a bit involved.</li>
-		<li>VS Code: Optionally, if the user is used to VS code IDE, then using that on Windows can boost productivity as it can support both WSL and Git bash terminals.</li>
-	</ul>
+    <ul>
+    <b>Ans:</b> In my opinion, with the following configurations, a user coming from a Linux background will find Windows 10 much more comfortable for interacting with HPC:
+	    <ul>
+		    <li>WSL Linux: By installing WSL, e.g., Ubuntu on Windows, the user can get a near‐native Linux environment and command line.</li>
+		    <li>Git Bash: This also offers Linux like shell on Windows. However, installing utility tools like <i>rsync</i> is a bit involved.</li>
+		    <li>VS Code: Optionally, if the user is used to VS code IDE, then using that on Windows can boost productivity as it can support both WSL and Git bash terminals.</li>
+	    </ul>
+    </ul>
 
 ### Bioinformatics
 1. The [VCF format](http://www.internationalgenome.org/wiki/Analysis/vcf4.0/) is a popular format to describe genetic variations in a study group. It is often used in sequencing projects. Due to size concerns, it is often compressed using `gzip` and indexed using `tabix`. A binary version, BCF, also exists.
