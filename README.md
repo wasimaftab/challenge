@@ -27,7 +27,9 @@ To submit your results, please clone this repository and make your edits. Once y
     ```
     This points to an incompatible g++ compiler, perhaps an older one which does not recognize the  `-std=c++11` flag. Also, towards the end the error like `/bin/sh: nc-config: command not found` suggests that some of the development package is missing or not in the PATH. So, the user needs to check these points, and fixing them might solve the issue.
 6. A user is running commands like this one `cat file1 <(cut -d " " -f 1-15,17,18 file2) > file3`. What does this command do? It runs fine on the command line, but then the user includes it into a file with other commands, saves it and runs `chmod +x` on it. However, that line of code throws the following error : `syntax error near unexpected token '('`. What has the user forgotten?
-7. A collaborator has sent you [this script](data/EasyQCWrapper.sh). It is a wrapper for a bioinformatics software called `EasyQC`.  Running it, you get the following error: 
+   <p><b>Ans:</b> The command extracts the columns 1st to 15th, then 17th, 18th from file2 and then vertically concatenates at the end of file1 and finally saves into file3.
+   I think the user forgot to include the proper shebang line at the top of the script. By adding a line like <i>#!/bin/bash</i> should solve the issue.</p>
+8. A collaborator has sent you [this script](data/EasyQCWrapper.sh). It is a wrapper for a bioinformatics software called `EasyQC`.  Running it, you get the following error: 
 
     ```bash
     ./test.EasyQC-START.R: line 6: syntax error near unexpected token 'EasyQC'
@@ -35,10 +37,10 @@ To submit your results, please clone this repository and make your edits. Once y
     ```
 
      You need to run this script now, but your collaborator is unavailable for a few days. What is causing the error? (Hint: Nothing is wrong with the `.ecf` EasyQC script.)
-8. Programmatic download
+9. Programmatic download
     - You have to download all autosomal files from this location: [http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/GRCh38_positions/](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/supporting/GRCh38_positions/) onto **your server**. You connect to the server via SSH. Using only the command line, how do you perform this download?
     - You are at a conference abroad and you quickly realise that your connection is unstable. You get disconnected constantly, which interrupts the download. How do you ensure the download survives these disconnections?
-9. Bioinformaticians often work on a computing cluster. The cluster runs a software called a job scheduler that attributes resources to users depending on the requirements of their jobs. In this case, let's imagine the cluster is running IBM LSF. You do not need to know it to answer this question. The `bjobs` command lists all jobs submitted by the user (manpage [here](https://www.ibm.com/support/knowledgecenter/en/SSETD4_9.1.2/lsf_command_ref/bjobs.1.html)). It gives this kind of output:
+10. Bioinformaticians often work on a computing cluster. The cluster runs a software called a job scheduler that attributes resources to users depending on the requirements of their jobs. In this case, let's imagine the cluster is running IBM LSF. You do not need to know it to answer this question. The `bjobs` command lists all jobs submitted by the user (manpage [here](https://www.ibm.com/support/knowledgecenter/en/SSETD4_9.1.2/lsf_command_ref/bjobs.1.html)). It gives this kind of output:
     ```
     JOBID   USER             STAT  QUEUE      FROM_HOST EXEC_HOST JOB_NAME SUBMIT_TIME
     9670681 current_user     RUN   basement   head_node node1     job1     Oct 24 10:24
@@ -50,12 +52,12 @@ To submit your results, please clone this repository and make your edits. Once y
      - Given the [following output](data/farm-snapshot.txt) of `bjobs -all`, which users are the top 5 users of the cluster?
      - How many jobs does the user `pathpip` have running in all queues?
      - A user wants to know how many jobs they have pending (`PEND`) and running (`RUN`) in each queue. Write a command line to do that (You can use the log above to check your command line). How would they display this on their screen permanently, in real time?
-10. An analysis you need to run on the cluster requires a particular python library, but you do not have administrator rights. IT is on holiday. What do you do?
+11. An analysis you need to run on the cluster requires a particular python library, but you do not have administrator rights. IT is on holiday. What do you do?
     <ul>
     <b>Ans:</b> I will install it locally using `pip install --user my_package`. This will install it in ~/.local/lib/pythonX.Y/site-packages/my_package/, where X, and Y are major and minor Python versions. Then, I will also need to add the ~/.local/bin to PATH as export PATH=$HOME/.local/bin:$PATH in my .bashrc file. This is done to make sure my package binary is discoverable during runtime in case it is a command-line tool.
     </ul>
 
-11. All major computational tasks in your lab are done via SSH connection to mainframe servers or HPC clusters. A user comes from a Linux (mostly command-line) background but IT only support Windows 10 for laptops. How would you advise them to configure their laptop to make their transition easier?
+12. All major computational tasks in your lab are done via SSH connection to mainframe servers or HPC clusters. A user comes from a Linux (mostly command-line) background but IT only support Windows 10 for laptops. How would you advise them to configure their laptop to make their transition easier?
 
 ### Bioinformatics
 1. The [VCF format](http://www.internationalgenome.org/wiki/Analysis/vcf4.0/) is a popular format to describe genetic variations in a study group. It is often used in sequencing projects. Due to size concerns, it is often compressed using `gzip` and indexed using `tabix`. A binary version, BCF, also exists.
