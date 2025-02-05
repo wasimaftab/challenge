@@ -58,6 +58,12 @@ To submit your results, please clone this repository and make your edits. Once y
     </ul>
 
 12. All major computational tasks in your lab are done via SSH connection to mainframe servers or HPC clusters. A user comes from a Linux (mostly command-line) background but IT only support Windows 10 for laptops. How would you advise them to configure their laptop to make their transition easier?
+	<p><b>Ans:</b> In my opinion, with the following configurations, a user coming from a Linux background will find Windows 10 much more comfortable for interacting with HPC:</p>
+ 	<ul>
+		<li>WSL Linux: By installing WSL, e.g., Ubuntu on Windows, the user can get a near‐native Linux environment and command line.</li>
+		<li>Git Bash: This also offers Linux like shell on Windows. However, installing utility tools like <i>rsync</i> is a bit involved.</li>
+		<li>VS Code: Optionally, if the user is used to VS code IDE, then using that on Windows can boost productivity as it can support both WSL and Git bash terminals.</li>
+	</ul>
 
 ### Bioinformatics
 1. The [VCF format](http://www.internationalgenome.org/wiki/Analysis/vcf4.0/) is a popular format to describe genetic variations in a study group. It is often used in sequencing projects. Due to size concerns, it is often compressed using `gzip` and indexed using `tabix`. A binary version, BCF, also exists.
