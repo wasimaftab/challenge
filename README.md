@@ -176,7 +176,7 @@ To submit your results, please clone this repository and make your edits. Once y
     </ul>
 9.	What is the p-value corresponding to standard normal z-scores of 10.35, 29.7, 45.688 and 78.1479?
     <ul>
-    <b>Ans:</b> Since all given Z-scores are positive, we only need to compute the right-tailed p-values (i.e., 𝑃(𝑍 > 𝑞)).
+    <b>Ans:</b> Since all given Z-scores are positive, we only need to compute the right-tailed p-values (i.e., <i>P(Z > q)</i>).
     In R this can be done by using the following commands,
     <br>q <- c(10.35, 29.7, 45.688, 78.1479) <br>
     p_values <- pnorm(q, lower.tail = FALSE) # One-tailed (right-sided) p-values
