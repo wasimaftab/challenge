@@ -165,6 +165,15 @@ To submit your results, please clone this repository and make your edits. Once y
     - What is the fastest way to check the integrity of, or compare, any such downloaded file?
     - If you find that the files are indeed different, how do you find their differences? Keep in mind that this kind of file can be very large (>100Gb), your solution should be as fast and memory-efficient as possible.
     - If you found no differences in the end, what could cause a false alarm?
+    <p></p>
+    <ul>
+    <b>Ans:</b>
+	<ul>
+	<li> The given link does not work so I will provide a conceptual answer here. I will use <i>md5sum</i> to compute the checksums of the files and compare them using <i>diff</i> command. If no output is produced then the files are identical.</li>
+    <li>To compare large VCF files, one can use <i>bcftools</i>, e.g.,<code>bcftools cmp remote/ALL.chr21_GRCh38_sites.20170504.vcf.gz local/ALL.chr21_GRCh38_sites.20170504.vcf.gz</code>. This generates a summary of matching vs. non-matching records and is typically more memory‐efficient than a raw line‐by‐line <i>diff</i>, because <i>bcftools</i> can parse BGZF blocks and parse VCF records in a streamed fashion.</li>
+    <li>In the event of false alarm, you may find the compressed files differ in a bitwise sense but the actual VCF contents might still be functionally identical. Some common reasons could be, different compression, or minor changes in header lines (dates, software versions), or other metadata differences that don’t affect the actual genotype data.</li>
+    </ul>
+</ul>
 9.	What is the p-value corresponding to standard normal z-scores of 10.35, 29.7, 45.688 and 78.1479?
     <ul>
     <b>Ans:</b> Since all given Z-scores are positive, we only need to compute the right-tailed p-values (i.e., 𝑃(𝑍 > 𝑞)).
