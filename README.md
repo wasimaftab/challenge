@@ -173,7 +173,7 @@ To submit your results, please clone this repository and make your edits. Once y
     <li>To compare large VCF files, one can use <i>bcftools</i>, e.g.,<code>bcftools cmp remote/ALL.chr21_GRCh38_sites.20170504.vcf.gz local/ALL.chr21_GRCh38_sites.20170504.vcf.gz</code>. This generates a summary of matching vs. non-matching records and is typically more memory‐efficient than a raw line‐by‐line <i>diff</i>, because <i>bcftools</i> can parse BGZF blocks and parse VCF records in a streamed fashion.</li>
     <li>In the event of false alarm, you may find the compressed files differ in a bitwise sense but the actual VCF contents might still be functionally identical. Some common reasons could be, different compression, or minor changes in header lines (dates, software versions), or other metadata differences that don’t affect the actual genotype data.</li>
     </ul>
-</ul>
+    </ul>
 9.	What is the p-value corresponding to standard normal z-scores of 10.35, 29.7, 45.688 and 78.1479?
     <ul>
     <b>Ans:</b> Since all given Z-scores are positive, we only need to compute the right-tailed p-values (i.e., 𝑃(𝑍 > 𝑞)).
