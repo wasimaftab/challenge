@@ -69,6 +69,8 @@ To submit your results, please clone this repository and make your edits. Once y
 1. The [VCF format](http://www.internationalgenome.org/wiki/Analysis/vcf4.0/) is a popular format to describe genetic variations in a study group. It is often used in sequencing projects. Due to size concerns, it is often compressed using `gzip` and indexed using `tabix`. A binary version, BCF, also exists.
     - Write a command or script to remove duplicate positions in a VCF such as [this one](data/duplicates.vcf.gz), independently of their alleles. The positions can be duplicated an arbitrary number of times. Write code to keep the first, last and a random record among each set of duplicated records.
     - Same question, but make duplicate detection allele-specific. When it finds such an exact duplicate, your code should remove all of the corresponding records.
+    <p><b>Ans:</b></p>
+      
     ```
     import pysam
     import random
@@ -141,6 +143,8 @@ To submit your results, please clone this repository and make your edits. Once y
     write_vcf(allele_filtered_path, df_allele_filtered)
     ```
 2. From an existing VCF with an arbitrary number of samples, how do you produce a VCF file without any samples using `bcftools`?
+   <p><b>Ans:</b></p>
+   
     ```
     bcftools view -G samples.vcf.gz -Oz -o no_samples_my.vcf.gz
     ```
@@ -168,6 +172,8 @@ To submit your results, please clone this repository and make your edits. Once y
     </ul>    
 
 11.	We want to round a column of numbers to `n` decimal places, with values with 5 as their rightmost significant digit rounded up. Use the language of your choice.
+     <p><b>Ans:</b></p>
+     
     ```
     import pandas as pd
     from decimal import Decimal, ROUND_HALF_UP
