@@ -267,17 +267,40 @@ To submit your results, please clone this repository and make your edits. Once y
         df['rounded'] = df['values'].apply(lambda x: round_half_up(x, n))
     ```
 13.  Is [this HRC-imputed file](https://drive.google.com/open?id=1dOYlwIlAyz9-i4gVy2sgpQv_4YX9Y5nU) missing any chromosomes? Try to find out in seconds if you can.
-14.  Find out the coordinates of the _ADIPOQ_ gene. Your method should be generalisable to a list of genes and take a few seconds to run (take inspiration from question 5). Then, please report the following:
+    <ul>
+    <b>Ans:</b> Since the file is quite large, I will use this command <code>zcat hrc.positions.txt.bgz | tail -n +2 | cut -f2 | sort -n | uniq</code>. The idea is to stream the file with zcat, and then skip the header, extract the chromosome column, and finally sort and take unique entries. This produced the following output:
+	1
+	2
+	3
+	4
+	5
+	6
+	7
+	8
+	9
+	11
+	12
+	13
+	14
+	15
+	16
+	17
+	18
+	19
+	21
+	22 and from the output, it is clear that the file is missing 10, 20 autosomal chromosomes and the sex chromosomes.
+     </ul>
+15.  Find out the coordinates of the _ADIPOQ_ gene. Your method should be generalisable to a list of genes and take a few seconds to run (take inspiration from question 5). Then, please report the following:
     - the coordinates of the exons of its canonical transcript.
     - all documented variants in this gene.
     - all phenotype-associated variants. 
     - all documented loss-of-function (LoF) variants in this gene. How did you define LoF?
     - If asked to find all regulatory variants that potentially affect this gene, which questions would you ask and how would you proceed?
-15. How would you convert a VCF file to the Plink binary format? How would you do the reverse, and what kind of problems do you anticipate?
-16. Write a snippet to reformat a PED file so as to output a file with the following header `sample_name genotype_SNP1 genotype_SNP2 ...` where genotypes are coded VCF-style (e.g `A/C`, the order of the alleles in the output is not important).
-17. A genetic association pipeline starts with a VCF and produces summary statistics for every position. The VCF contains multiallelics and indels. Unfortunately, a program in the pipeline trims all alleles to their first character. Why might allele frequencies not always be equal for a given variant? Find a way to correct the alleles in the association file by using the information from the VCF. Select columns are provided for [the association file](https://github.com/hmgu-itg/challenge/raw/master/data/association.txt.gz). We also provide [a file](https://github.com/hmgu-itg/challenge/raw/master/data/fromVCF.txt.gz) that was created from the VCF using `bcftools query -f '%CHROM %POS %REF %ALT %AN %AC\n'`.
-18. [This file](https://github.com/hmgu-itg/challenge/raw/master/data/mock.eQTL.forChallenge.txt) contains eQTL overlap data for SNPs that arise as signals in GWAS for several phenotypes. Reformat this file to have one line per SNP/phenotype pair, and two additional columns formatted as such : `GENE1(tissue1, tissue2),GENE2(tissue1, tissue3)`, and `GENE1(2),GENE2(2)`. Each line should contain the SNP/phenotype pair, all genes found overlapping and their respective tissues, and all genes found overlapping with the number of tissues.
-19. A researcher wants to conduct a disease association study. However, colleagues warn him that the dataset contains related individuals. He would like to remove relatedness in his dataset, but given his disease is rare, he would also like to maximise the number of cases kept in. Using [a list of samples with disease status](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.pheno.tsv) and [a file containing pairs of individuals above a relatedness threshold](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.tsv), create an exclusion list of samples to remove to help the researcher achieve their goal.
+16. How would you convert a VCF file to the Plink binary format? How would you do the reverse, and what kind of problems do you anticipate?
+17. Write a snippet to reformat a PED file so as to output a file with the following header `sample_name genotype_SNP1 genotype_SNP2 ...` where genotypes are coded VCF-style (e.g `A/C`, the order of the alleles in the output is not important).
+18. A genetic association pipeline starts with a VCF and produces summary statistics for every position. The VCF contains multiallelics and indels. Unfortunately, a program in the pipeline trims all alleles to their first character. Why might allele frequencies not always be equal for a given variant? Find a way to correct the alleles in the association file by using the information from the VCF. Select columns are provided for [the association file](https://github.com/hmgu-itg/challenge/raw/master/data/association.txt.gz). We also provide [a file](https://github.com/hmgu-itg/challenge/raw/master/data/fromVCF.txt.gz) that was created from the VCF using `bcftools query -f '%CHROM %POS %REF %ALT %AN %AC\n'`.
+19. [This file](https://github.com/hmgu-itg/challenge/raw/master/data/mock.eQTL.forChallenge.txt) contains eQTL overlap data for SNPs that arise as signals in GWAS for several phenotypes. Reformat this file to have one line per SNP/phenotype pair, and two additional columns formatted as such : `GENE1(tissue1, tissue2),GENE2(tissue1, tissue3)`, and `GENE1(2),GENE2(2)`. Each line should contain the SNP/phenotype pair, all genes found overlapping and their respective tissues, and all genes found overlapping with the number of tissues.
+20. A researcher wants to conduct a disease association study. However, colleagues warn him that the dataset contains related individuals. He would like to remove relatedness in his dataset, but given his disease is rare, he would also like to maximise the number of cases kept in. Using [a list of samples with disease status](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.pheno.tsv) and [a file containing pairs of individuals above a relatedness threshold](https://github.com/hmgu-itg/challenge/raw/master/data/relateds.tsv), create an exclusion list of samples to remove to help the researcher achieve their goal.
 
 ### Statistical genetics
 1. You sample at random 10,000 variants from a deep (50x) whole-genome sequencing variant call file describing 1,000 individuals. What do you expect the distribution of minor allele frequency to look like? In particular, which minor allele counts are likely to be most frequent?
